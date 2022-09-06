@@ -13,7 +13,7 @@ A much cleaner approach for handling side-effects conditionally is with the [`us
 
 For example:
 
-<NewEditor codeString={`function renderUsername(username) {
+<NewEditor id="unique"  codeString={`function renderUsername(username) {
     var [usernameElem,setElem] = useState(null);
 
     useEffect(function onActivate(){
@@ -41,7 +41,7 @@ For example:
         }
 
     }
-
+}
 // ...
 renderUsername(user.shortName);
 `} client:only="react" />
@@ -54,22 +54,20 @@ TNG hooks can also be used in a non-Articulated Function, which implies it will 
 
 For example:
 
-<NewEditor codeString={`
-    // Custom Hook (adopt the TNG hooks-context from showNav())
-    function useName(defaultName) {
-        var [name, setName] = useState(defaultName);
-        // ..
-    }
+<NewEditor id="something"   codeString={`// Custom Hook (adopt the TNG hooks-context from showNav())
+function useName(defaultName) {
+  var [name, setName] = useState(defaultName);
+  // ..
+}
 
-    // Articulated Function
-    function showNav() {
-        useName('user');
-        // ..
-    }
+// Articulated Function
+function showNav() {
+  useName("user");
+  // ..
+}
 
-    showNav = TNG(showNav);
-    showNav();
-
+showNav = TNG(showNav);
+showNav();
 `}
 
 client:only="react"

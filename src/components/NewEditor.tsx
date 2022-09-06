@@ -32,7 +32,10 @@ const FontSizeTheme = EditorView.theme({
 
 const FontSizeThemeExtension = [FontSizeTheme];
 
-const NewEditor: React.FC<{ codeString: string }> = ({ codeString }) => {
+const NewEditor: React.FC<{ codeString: string; id: string }> = ({
+  codeString,
+  id,
+}) => {
   console.log(codeString, 'CODESTRING');
   useEffect(() => {
     let parsedASTData: BabelReponseInterface;
@@ -96,7 +99,7 @@ const NewEditor: React.FC<{ codeString: string }> = ({ codeString }) => {
         // oneDarkTheme,
         // syntaxExtension,
       ],
-      parent: document.querySelector('#editor')!,
+      parent: document.querySelector(id ? `#${id}` : '#editor')!,
     });
 
     parseCode(codeString).then((res) => {
@@ -120,7 +123,7 @@ const NewEditor: React.FC<{ codeString: string }> = ({ codeString }) => {
     };
   }, []);
 
-  return <div id="editor"> </div>;
+  return <div id={id ? id : '#editor'}> </div>;
 };
 
 export default NewEditor;
