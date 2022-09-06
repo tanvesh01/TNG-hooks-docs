@@ -1,0 +1,35 @@
+.cm-s-notKarma {
+	background: #282a36;
+	color: #f8f8f2;
+}
+.cm-s-notKarma .CodeMirror-activeline-background {
+	background: #44475a;
+}
+.cm-s-notKarma .CodeMirror-selected {
+	background: #44475a;
+}
+.cm-s-notKarma .cm-comment {
+	color: #6272a4;
+}
+.cm-s-notKarma .cm-string {
+	color: #f1fa8c;
+}
+.cm-s-notKarma .cm-number {
+	color: #bd93f9;
+}
+.cm-s-notKarma .cm-atom {
+	color: #bd93f9;
+}
+.cm-s-notKarma .cm-keyword {
+	color: #ff79c6;
+}
+.cm-s-notKarma .cm-variable {
+	color: #50fa7b;
+}
+.cm-s-notKarma .cm-def {
+	font-style: italic;
+	color: #ffb86c;
+}
+.cm-s-notKarma .cm-property {
+	color: #8be9fd;
+}

@@ -1,0 +1,112 @@
+---
+// Component Imports
+import MdRenderer from '../components/MdRenderer';
+import NewEditor from '../components/NewEditor'
+import {Content as PromoBanner} from '../content/docs.mdx';
+import '../notKarma.css';
+
+// Full Astro Component Syntax:
+// https://docs.astro.build/core-concepts/astro-components/
+
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+		<title>TNG Hooks</title>
+		<style>
+			html,
+			body {
+				font-family: system-ui;
+				margin: 0;
+			}
+			body {
+				padding: 2rem;
+			}
+	
+			.cm-line {
+				font-family: 'JetBrains Mono', monospace;
+			}
+			.cm-editor .cm-content { 
+			font-family: 'JetBrains Mono', monospace;
+		
+		}
+		</style>
+	</head>
+	<body>
+		<main>
+			<MdRenderer  mdContent={`## Overview
+**TNG-Hooks** (/ˈting ho͝oks/) provides hooks (i.e., \`useState(..)\`, \`useReducer(..)\`, \`useEffect(..)\`, etc) for decorating regular, standalone functions with useful state and effects management. Custom hooks are also supported.
+				
+TNG is inspired by the conventions and capabilities of [React's Hooks](https://reactjs.org/docs/hooks-overview.html), so much of TNG resembles React Hooks. The growing collections of information and [examples](https://usehooks.com/) about React's Hooks will also be useful in sparking ideas for TNG usage.
+				
+However, this is a separate project with its own motivations and specific behaviors. TNG will remain similar to React Hooks where it makes sense, but there will also be deviations as appropriate.
+
+### Articulated Functions
+
+An **Articulated Function** is the TNG equivalent of a React function component: a regular, standalone function decorated with a TNG hooks-context, which means hooks are valid to use during its invocation.
+
+Unlike a normal pure function, which takes all its inputs and computes output(s) without producing any side-effects, the most straightforward way to think about an Articulated Function is that it is **stateful** (maintains its own state) and **effectful** (spins off side-effects).
+
+These will often be used to model the rendering of UI components, as is seen with React components. But Articulated Functions are useful for tracking any kind of state, as well as applying various side effects (asynchrony, Ajax calls, database queries, etc).
+
+Similar to [React's "Custom Hooks"](https://reactjs.org/docs/hooks-custom.html), TNG's Articulated Functions can also invoke other non-Articulated Functions, which allows those function calls to adopt the active hooks-context and use any current hooks, as if they *were* Articulated. These non-articulated-but-hooks-capable functions are [TNG's Custom Hooks](#custom-hooks).
+
+### Quick Examples
+
+One of the most common TNG hooks is the [\`useState(..)\` hook](#usestate-hook), which stores persistent (across invocations) state for an Articulated Function, essentially the same as [React's \`useState(..)\` hook](https://reactjs.org/docs/hooks-state.html) does for a function component.
+
+For example:
+				`}   />
+
+				<NewEditor codeString={`// generating Articulated Functions (aka, wrapping with TNG hooks-context)
+[renderUsername,onClickUsername] = TNG(renderUsername,onClickUsername);
+
+function renderUsername(username) {
+    // using the \`useState(..)\` hook
+    var [activated,setActivated] = useState(false);
+
+    usernameElem.innerHTML = username;
+
+    // only run this code the first time
+    if (!activated) {
+        setActivated(true);
+        usernameElem.addEventListener("click",onClickUsername,false);
+    }
+}
+
+useEffect(() => {
+    parseCode(codeString).then((res) => console.log(res));
+  }, [state]);
+
+function onClickUsername() {
+    // using the \`useState(..)\` hook
+    var [expanded,setExpanded] = useState(false);
+
+    // toggles based on \`expanded\` state
+    if (!expanded) {
+        setExpanded(true);
+        renderUsername(user.longName);
+    }
+    else {
+        setExpanded(false);
+        renderUsername(user.shortName);
+    }
+}
+
+// ...
+
+var usernameElem = document.getElementById("username");
+var user = { shortName: "KS", longName: "Kyle Simpson", };
+renderUsername(user.shortName);
+				`} client:only="react" />
+	<PromoBanner />
+		</main>
+	</body>
+</html>

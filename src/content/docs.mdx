@@ -1,0 +1,118 @@
+---
+---
+
+import NewEditor from '../components/NewEditor';
+
+**[Run Demo](https://codepen.io/getify/pen/dQvEGW?editors=1010)**
+
+In the above snippet, `activated` is persistent (across invocations) state for the `renderUsername(..)` Articulated Function, and `expanded` is separate persistent state for the `onClickUsername(..)` Articulated Function.
+
+`activated` in the above snippet demonstrates how to perform an action just once, such as attaching a click handler to a DOM element. That works, but it's not ideal.
+
+A much cleaner approach for handling side-effects conditionally is with the [`useEffect(..)` hook](#useEffect-hook), which is inspired by [React's `useEffect(..)` hook](https://reactjs.org/docs/hooks-effect.html).
+
+For example:
+
+<NewEditor codeString={`function renderUsername(username) {
+    var [usernameElem,setElem] = useState(null);
+
+    useEffect(function onActivate(){
+        usernameElem = document.getElementById("username");
+        usernameElem.addEventListener("click",onClickUsername,false);
+
+        setElem(usernameElem);
+    },[]);
+
+    useEffect(function onUpdate(){
+        usernameElem.innerHTML = username;
+        },[username]);
+    }
+
+    function onClickUsername() {
+        var [expanded,setExpanded] = useState(false);
+
+        if (!expanded) {
+            setExpanded(true);
+            renderUsername(user.longName);
+        }
+        else {
+            setExpanded(false);
+            renderUsername(user.shortName);
+        }
+
+    }
+
+// ...
+renderUsername(user.shortName);
+`} client:only="react" />
+
+**[Run Demo](https://codepen.io/getify/pen/VqMzGK?editors=1010)**
+
+In this snippet, the first `useEffect( .. , [] )` passes an empty array (`[]`) for its list of conditional state guards, which means that effect will only ever run the first time. The second `useEffect( .., [username] )` passes `[username]` for its list of conditional state guards, which ensures that its effect will only run if the `username` value is different from the previous applied invocation of that effect.
+
+TNG hooks can also be used in a non-Articulated Function, which implies it will be treated essentially like a [React "Custom Hook"](https://reactjs.org/docs/hooks-custom.html); to have a TNG hooks-context available, the non-Articulated Custom Hook Function **_must be called_** from an Articulated Function, or an error will be thrown.
+
+For example:
+
+<NewEditor codeString={`
+    // Custom Hook (adopt the TNG hooks-context from showNav())
+    function useName(defaultName) {
+        var [name, setName] = useState(defaultName);
+        // ..
+    }
+
+    // Articulated Function
+    function showNav() {
+        useName('user');
+        // ..
+    }
+
+    showNav = TNG(showNav);
+    showNav();
+
+`}
+
+client:only="react"
+/>
+
+See [TNG Custom Hooks](#custom-hooks) below for more information.
+
+There are also some **_[IMPORTANT RULES](#hook-call-rules)_** to keep in mind with using TNG hooks in your Articulated Functions and Custom Hooks.
+
+## API
+
+TNG provides hooks which deliberately resemble React's hooks. However, as TNG is a separate project, there are some important nuances and differences to pay close attention to.
+
+### `TNG(..)`
+
+`TNG(..)` is a utility to produce [Articulated Functions](#articulated-functions) from normal, stanadlone functions. Articulated Functions adopt an active hooks-context to enable hooks capabilities.
+
+For example:
+
+```js
+// wrap one function at a time
+foo = TNG(foo);
+
+// or, wrap multiple functions at once
+[bar,baz] = TNG(bar,baz);
+
+function foo(..) { .. }
+function bar(..) { .. }
+function baz(..) { .. }
+```
+
+The same function can actually be Articulated multiple times, with each one getting its own separate TNG hooks-context:
+
+```js
+function foo(..) { .. }
+
+var [A,B] = TNG(foo,foo);
+var C = TNG(foo);
+
+// later:
+A();        // own separate TNG hooks-context
+B();        // ditto
+C();        // ditto
+```
+
+Articulated Functions have the same signature as the functions they wrap, including any arguments, return value, and the ability to be invoked with a `this` context if desired.
