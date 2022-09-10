@@ -1,0 +1,23 @@
+---
+import LayoutContainer from "../components/LayoutComponents/LayoutContainer"
+// 1. The frontmatter prop gives access to frontmatter and other data
+const { frontmatter } = Astro.props;
+import "../styles/global.css"
+---
+<html>
+  <head>
+    <!-- Add other Head elements here, like styles and meta tags. -->
+    <title>{frontmatter.title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <LayoutContainer client:load  >
+        <slot />
+    </LayoutContainer>
+    
+    <!-- 2. Rendered HTML will be passed into the default slot. -->
+    <p>Written on: {frontmatter.date}</p>
+  </body>
+</html>

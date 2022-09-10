@@ -1,0 +1,61 @@
+---
+layout: ../../Layouts/BlogPageLayout.astro
+title: Blog Post
+description: My first blog post!
+---
+
+import NewEditor from '../../components/NewEditor';
+export const countString = "${count + amount}";
+
+
+### `useReducer(..)` Hook
+
+Like [React's `useReducer(..)` hook](https://reactjs.org/docs/hooks-reference.html#usereducer), the TNG `useReducer(..)` hook is like a special case of [TNG's `useState(..)` hook](#usestate-hook) in that it also provides for persistent state storage across invocations; but it's especially helpful for certain cases when the state updates are more involved.
+
+`useReducer(..)` expects a reducer function and an initial value for its state unit.
+
+For example:
+<NewEditor id="useReducer-1"
+codeString={`function hit( amount = 1 ) {
+    var [count, incCounter] = useReducer(updateCounter, 0);
+    incCounter(amount);
+
+    console.log(\`Hit count: ${countString}\`);
+}
+
+function updateCounter(prevCount, val) {
+    return prevCount + val;
+}
+
+hit = TNG(hit);
+
+hit();       // Hit count: 1
+hit();       // Hit count: 2
+hit(8);      // Hit count: 10`}
+client:only="react"
+/>
+
+Optionally, you can pass a third argument to `useReducer(..)` (value `5` in the following snippet), which specifies a value to be used in invoking the reducer immediately on this initial pass:
+
+<NewEditor id="useReducer-2" 
+codeString={`function hit( amount = 1 ) {
+    var [count, incCounter] = useReducer(updateCounter, 0, 5);
+    incCounter(amount);
+
+    console.log(\`Hit count: ${countString}\`);
+}
+
+function updateCounter(prevCount,val) {
+    return prevCount + val;
+}
+
+hit = TNG(hit);
+
+hit();       // Hit count: 6
+hit();       // Hit count: 7
+hit(3);      // Hit count: 10`}
+client:only="react"
+
+/>
+
+The line `useReducer(updateCounter, 0, 5)` immediately invokes `updateCounter(0,5)`, which returns `5`, and the state unit (named `count` here) is then initially set to *that* `5` value.

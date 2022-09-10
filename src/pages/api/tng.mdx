@@ -1,0 +1,79 @@
+---
+layout: ../../Layouts/BlogPageLayout.astro
+title: Blog Post
+description: My first blog post!
+---
+
+import NewEditor from '../../components/NewEditor';
+
+### `TNG(..)`
+
+TNG provides hooks which deliberately resemble React's hooks. However, as TNG is a separate project, there are some important nuances and differences to pay close attention to.
+
+`TNG(..)` is a utility to produce [Articulated Functions](#articulated-functions) from normal, stanadlone functions. Articulated Functions adopt an active hooks-context to enable hooks capabilities.
+
+For example:
+
+<NewEditor id="TNG-1" 
+
+codeString={`// wrap one function at a time
+foo = TNG(foo);
+
+// or, wrap multiple functions at once
+[bar,baz] = TNG(bar,baz);
+
+function foo(..) { .. }
+function bar(..) { .. }
+function baz(..) { .. }
+`}
+client:only="react"
+/>
+The same function can actually be Articulated multiple times, with each one getting its own separate TNG hooks-context:
+
+<NewEditor id="TNG-2"  codeString={`function foo(..) { .. }
+
+var [A,B] = TNG(foo,foo);
+var C = TNG(foo);
+
+// later:
+A();        // own separate TNG hooks-context
+B();        // ditto
+C();        // ditto
+`}
+
+client:only="react"
+/>
+
+Articulated Functions have the same signature as the functions they wrap, including any arguments, return value, and the ability to be invoked with a `this` context if desired.
+
+#### Resetting Hooks-Context
+
+Articulated Functions also have a method defined on them called `reset()`. The `reset()` method resets the internal TNG hooks-context of an Articulated Function, including any state slots, effects, etc.
+
+For example:
+
+
+<NewEditor id="TNG-3"
+codeString={`
+function hit() {
+    var [count,updateCount] = useState(0);
+
+    count++;
+    updateCount(count);
+}
+
+hit = TNG(hit);
+
+hit();       // Hit count: 1
+hit();       // Hit count: 2
+hit();       // Hit count: 3
+
+hit.reset();
+
+hit();       // Hit count: 1
+`}
+
+ client:only="react"
+/>
+
+Also, if an Articulated Function has any [pending effect cleanup functions](#effect-cleanups), `reset()` will trigger them. See [`useEffect(..)`](#useeffect-hook) for more information on effects and cleanups.

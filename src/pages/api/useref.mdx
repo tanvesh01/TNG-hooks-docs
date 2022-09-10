@@ -1,0 +1,35 @@
+---
+layout: ../../Layouts/BlogPageLayout.astro
+title: Blog Post
+description: My first blog post!
+---
+
+import NewEditor from '../../components/NewEditor';
+export const templatingString = "`Hit count: ${counter.current}`";
+
+### `useRef(..)` Hook
+
+Similar to [React's `useRef(..)` hook](https://reactjs.org/docs/hooks-reference.html#useref), the TNG `useRef(..)` hook creates an object stored persistently in a state slot (via the [`useState(..)` hook](#usestate-hook)), and creates a property on it called `current` which holds a specified initial value, if any.
+
+For example:
+
+<NewEditor id="useRef-1" 
+
+codeString={`function hit() {
+    var counter = useRef(0);
+
+    counter.current++;
+
+    console.log(\`${templatingString}\`);
+}
+
+hit = TNG(hit);
+
+hit();       // Hit count: 1
+hit();       // Hit count: 2
+hit();       // Hit count: 3`}
+client:only="react"
+
+/>
+
+It may be more convenient to pass around the reference to this persistent object, and make any updates to its `current` property (or add/remove other properties), than to have to pass around both a state value and its updater function.

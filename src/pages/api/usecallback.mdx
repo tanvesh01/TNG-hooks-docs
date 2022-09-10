@@ -1,0 +1,48 @@
+---
+layout: ../../Layouts/BlogPageLayout.astro
+title: Blog Post
+description: My first blog post!
+---
+
+import NewEditor from '../../components/NewEditor';
+export const templatingString = "`User (${data.userID}) data: ${resp}`";
+
+### `useCallback(..)` Hook
+
+Like [React's `useCallback(..)` hook](https://reactjs.org/docs/hooks-reference.html#usecallback), the TNG `useCallback(..)` hook conditionally selects (via memoization) either the previous version of a function, if a set of input-guards haven't changed, or the new version of the function if the input-guards have changed.
+
+For example:
+
+
+<NewEditor id="useCallback-1" 
+codeString={`function requestData(data) {
+    var cb = useCallback(
+        function onData(resp){
+            console.log(\`${templatingString}\`);
+        },
+        [data.userID]
+    );
+    ajax(API_URL,data,cb);
+}
+
+requestData = TNG(requestData);
+
+requestData({ userID: 1 });
+// User (1): ...
+
+requestData({ userID: 1 });
+// User (1): ...
+
+requestData({ userID: 2 });
+// User (2): ...`}
+client:only="react"
+
+/>
+
+In this snippet, the `onData(..)` function is conditionally guarded by the input-guards list `[data.userID]`, which means that `cb` will remain the same instance of that `onData(..)` function as long as `data.userID` stays the same. In other words, the first invocation of `requestData(..)`, with `data.userID` of `1`, defines (and memoizes) an `onData(..)` nested function expression, and assigns it to `cb`.
+
+For the second invocation of `requestData(..)`, where `data.userID` is still `1`, the new `onData(..)` nested function expression is just discarded, and the previously saved `onData(..)` function reference is returned to `cb` instead.
+
+Once the `data.userID` changes (from `1` to `2`) for the third invocation of `requestData(..)`, that new `onData(..)` nested function expression replaces the previous function reference, and is returned to `cb`.
+
+**Note:** This particular example is only illustrative of how the `useCallback(..)` hook works, but would actually have worked the same if the hook had not been used. It takes more complicated examples to illustrate where this hook creates clear benefits.

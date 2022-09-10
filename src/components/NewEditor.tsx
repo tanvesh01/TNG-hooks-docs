@@ -23,7 +23,7 @@ const FontSizeTheme = EditorView.theme({
     paddingLeft: '20px',
   },
   '.cm-content': {
-    paddingTop: '20px',
+    padding: '20px 0',
   },
   '.cm-editor': {
     borderRadius: '1rem',

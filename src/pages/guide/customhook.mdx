@@ -1,0 +1,57 @@
+---
+layout: ../../Layouts/BlogPageLayout.astro
+title: Blog Post
+description: My first blog post!
+---
+
+import NewEditor from '../../components/NewEditor';
+export const templatingString = "`Button #${evt.target.id}: ${hitCount}`";
+export const print = (string) => string;
+
+### Custom Hooks
+
+If any TNG hooks are used in a non-Articulated Function, it behaves essentially like a [React "Custom Hook"](https://reactjs.org/docs/hooks-custom.html). A TNG Custom Hook ***must be called***, directly or indirectly, from an Articulated Function, so that it has an active TNG hooks-context available to use.
+
+For example:
+
+<NewEditor id="customHook-1" 
+codeString={`// a Custom Hook, ***not*** an Articulated Function
+function useHitCounter() {
+    // inherited TNG hooks-context
+    var [count,updateCount] = useState(0);
+
+    count++;
+    updateCount(count);
+
+    return count;
+}
+
+// will be TNG(..) Articulated twice, once as
+// each button's click handler
+function onClick(evt) {
+    // using a Custom Hook
+    var hitCount = useHitCounter();
+
+    console.log(\`${templatingString}\`);
+}
+
+var fooBtn = document.getElementById("foo-btn");
+var barBtn = document.getElementById("bar-btn");
+
+// each click handler is an Articulated \`${print("onClick()")}\`
+fooBtn.addEventListener("click",TNG(onClick),false);
+barBtn.addEventListener("click",TNG(onClick),false);
+`}
+client:only="react"
+
+
+
+/>
+
+**[Run Demo](https://codepen.io/getify/pen/VVbZOd?editors=1010)**
+
+**Note:** Unlike React, TNG does not ***require*** naming Custom Hooks in the format `useWHATEVER(..)` with a `use` prefix. You *can do so* if you prefer, as we did in the above snippet. See the [rules of TNG hooks](#hook-call-rules) below.
+
+The `useHitCounter(..)` Custom Hook -- again, just a normal non-Articulated Function that uses a TNG hook like `useState(..)`! -- inherits the TNG hooks-context of the Articulated Function that invoked it. In this example, the invoking Articulated Function is either one of the two click handlers (produced via the two `TNG(..)` calls) that were bound, respectively, as each button's click handler.
+
+In other words, the line `var [count,updateCount] = useState(0);` acts as if it had actually been called inside of one of the click handlers, even though it's in the separate `useHitCounter(..)` function; that's what makes `useHitCounter(..)` a Custom Hook, meaning it can be called from any Articulated Function.

@@ -1,0 +1,36 @@
+---
+layout: ../../Layouts/BlogPageLayout.astro
+title: Blog Post
+description: My first blog post!
+---
+
+import NewEditor from '../../components/NewEditor';
+
+### Hook Call Rules
+
+Similar to [the rules of React's hooks](https://reactjs.org/docs/hooks-rules.html#only-call-hooks-at-the-top-level), there are some rules/guides that you should keep in mind when using **TNG-Hooks**.
+
+1. All TNG hooks ***must always*** be called in the same order within an Articulated Function (and any Custom Hooks it calls). That is, you must never have an invocation of an Articulated Function that skips over an earlier hook call and tries to invoke one of the subsequent hook calls. ***THIS WILL BREAK!***
+
+    However, it is still technically possible to have hook calls in conditional situations (or even loops!), as long as you are very careful to never skip calls in an unsafe ordering manner.
+
+    If you have three hook calls (A, B, and C) in a function, these are the valid call ordering scenarios:
+
+    - A, B, C
+    - A, B
+    - A
+
+    Even though stopping short in the calling order is possible, it's still a best practice for reducing confusion to always call A, B, **and** C; avoid stopping short if possible.
+
+    Moreover, these are invalid calling order scenarios that ***definitely will break***:
+
+    - B, C
+    - A, C
+    - B
+    - C
+
+2. To avoid tripping on the intricasies of those calling order scenarios, it is ***strongly recommended*** that you only call TNG hooks from the top-level of the function, not inside of any loops or conditional statements.
+
+    This is considered a best practice in terms of readability of your functions. But it also happens to be the easiest way to ensure that the hooks are always called, and thus always called in the same order, ***which is critical*** as described above.
+
+3. Custom Hooks ***do not have to be*** named like `useXYZ(..)` with a `use` prefix. However, it's a *good suggestion* to do so, because it keeps in line with the [conventions from React's "Custom Hooks"](https://reactjs.org/docs/hooks-custom.html#using-a-custom-hook).

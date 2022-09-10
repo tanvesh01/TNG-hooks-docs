@@ -1,0 +1,156 @@
+---
+layout: ../Layouts/BlogPageLayout.astro
+title: Blog Post
+description: My first blog post!
+---
+
+import NewEditor from '../components/NewEditor';
+
+
+## Overview
+
+**TNG-Hooks** (/ˈting ho͝oks/) provides hooks (i.e., `useState(..)`, `useReducer(..)`, `useEffect(..)`, etc) for decorating regular, standalone functions with useful state and effects management. Custom hooks are also supported.
+
+TNG is inspired by the conventions and capabilities of [React's Hooks](https://reactjs.org/docs/hooks-overview.html), so much of TNG resembles React Hooks. The growing collections of information and [examples](https://usehooks.com/) about React's Hooks will also be useful in sparking ideas for TNG usage.
+
+However, this is a separate project with its own motivations and specific behaviors. TNG will remain similar to React Hooks where it makes sense, but there will also be deviations as appropriate.
+
+### Articulated Functions
+
+An **Articulated Function** is the TNG equivalent of a React function component: a regular, standalone function decorated with a TNG hooks-context, which means hooks are valid to use during its invocation.
+
+Unlike a normal pure function, which takes all its inputs and computes output(s) without producing any side-effects, the most straightforward way to think about an Articulated Function is that it is **stateful** (maintains its own state) and **effectful** (spins off side-effects).
+
+These will often be used to model the rendering of UI components, as is seen with React components. But Articulated Functions are useful for tracking any kind of state, as well as applying various side effects (asynchrony, Ajax calls, database queries, etc).
+
+Similar to [React's "Custom Hooks"](https://reactjs.org/docs/hooks-custom.html), TNG's Articulated Functions can also invoke other non-Articulated Functions, which allows those function calls to adopt the active hooks-context and use any current hooks, as if they *were* Articulated. These non-articulated-but-hooks-capable functions are [TNG's Custom Hooks](#custom-hooks).
+
+### Quick Examples
+
+One of the most common TNG hooks is the [`useState(..)` hook](#usestate-hook), which stores persistent (across invocations) state for an Articulated Function, essentially the same as [React's `useState(..)` hook](https://reactjs.org/docs/hooks-state.html) does for a function component.
+
+For example:
+
+<NewEditor id="quick-example-1" 
+
+codeString={`// generating Articulated Functions (aka, wrapping with TNG hooks-context)
+[renderUsername,onClickUsername] = TNG(renderUsername,onClickUsername);
+
+function renderUsername(username) {
+    // using the useState(..) hook
+    var [activated,setActivated] = useState(false);
+
+    usernameElem.innerHTML = username;
+
+    // only run this code the first time
+    if (!activated) {
+        setActivated(true);
+        usernameElem.addEventListener("click",onClickUsername,false);
+    }
+}
+
+function onClickUsername() {
+    // using the useState(..) hook
+    var [expanded,setExpanded] = useState(false);
+
+    // toggles based on expanded state
+    if (!expanded) {
+        setExpanded(true);
+        renderUsername(user.longName);
+    }
+    else {
+        setExpanded(false);
+        renderUsername(user.shortName);
+    }
+}
+
+// ...
+
+var usernameElem = document.getElementById("username");
+var user = { shortName: "KS", longName: "Kyle Simpson", };
+renderUsername(user.shortName);
+`}
+
+client:only="react"
+/>
+
+**[Run Demo](https://codepen.io/getify/pen/dQvEGW?editors=1010)**
+
+In the above snippet, `activated` is persistent (across invocations) state for the `renderUsername(..)` Articulated Function, and `expanded` is separate persistent state for the `onClickUsername(..)` Articulated Function.
+
+`activated` in the above snippet demonstrates how to perform an action just once, such as attaching a click handler to a DOM element. That works, but it's not ideal.
+
+A much cleaner approach for handling side-effects conditionally is with the [`useEffect(..)` hook](#useEffect-hook), which is inspired by [React's `useEffect(..)` hook](https://reactjs.org/docs/hooks-effect.html).
+
+For example:
+
+
+<NewEditor id="quick-example-2"
+codeString={`function renderUsername(username) {
+    var [usernameElem,setElem] = useState(null);
+
+    // using the useEffect(..) hook
+    useEffect(function onActivate(){
+        usernameElem = document.getElementById("username");
+        usernameElem.addEventListener("click",onClickUsername,false);
+
+        setElem(usernameElem);
+    },[]);
+
+    // using the useEffect(..) hook
+    useEffect(function onUpdate(){
+        usernameElem.innerHTML = username;
+    },[username]);
+}
+
+function onClickUsername() {
+    var [expanded,setExpanded] = useState(false);
+
+    if (!expanded) {
+        setExpanded(true);
+        renderUsername(user.longName);
+    }
+    else {
+        setExpanded(false);
+        renderUsername(user.shortName);
+    }
+}
+
+// ...
+
+var user = { shortName: "KS", longName: "Kyle Simpson", };
+renderUsername(user.shortName);
+`}
+
+client:only="react"
+/>
+
+**[Run Demo](https://codepen.io/getify/pen/VqMzGK?editors=1010)**
+
+In this snippet, the first `useEffect( .. , [] )` passes an empty array (`[]`) for its list of conditional state guards, which means that effect will only ever run the first time. The second `useEffect( .., [username] )` passes `[username]` for its list of conditional state guards, which ensures that its effect will only run if the `username` value is different from the previous applied invocation of that effect.
+
+TNG hooks can also be used in a non-Articulated Function, which implies it will be treated essentially like a [React "Custom Hook"](https://reactjs.org/docs/hooks-custom.html); to have a TNG hooks-context available, the non-Articulated Custom Hook Function ***must be called*** from an Articulated Function, or an error will be thrown.
+
+For example:
+<NewEditor id="quick-example-3"
+codeString={`// Custom Hook (adopt the TNG hooks-context from showNav())
+function useName(defaultName) {
+    var [name,setName] = useState(defaultName);
+    // ..
+}
+
+// Articulated Function
+function showNav() {
+    useName("user");
+    // ..
+}
+
+showNav = TNG(showNav);
+showNav();
+`}
+client:only="react"
+/>
+See [TNG Custom Hooks](#custom-hooks) below for more information.
+
+There are also some ***[IMPORTANT RULES](#hook-call-rules)*** to keep in mind with using TNG hooks in your Articulated Functions and Custom Hooks.
+

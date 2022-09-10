@@ -1,0 +1,116 @@
+---
+layout: ../../Layouts/BlogPageLayout.astro
+title: Blog Post
+description: My first blog post!
+---
+
+import NewEditor from '../../components/NewEditor';
+
+### `useMemo(..)` Hook
+
+Like [React's `useMemo(..)` hook](https://reactjs.org/docs/hooks-reference.html#usememo), the TNG `useMemo(..)` hook will invoke a function and return its value. But additionally, this return value is memoized (aka "remembered") so that if the same function (exact same reference!) is evaluated again, the function won't actually be invoked, but its memoized value will be returned.
+
+Memoization of a function's return value can be a very helpful performance optimization, preventing the function from being called unnecessarily when the same value would be returned anyway. Memoization should only be used when a function is likely to be called multiple times (with the same output returned), where this performance optimization will be beneficial.
+
+Keep in mind that memoization means TNG stores the last return value output for each memoized function, which could have implications on memory usage and/or GC behavior. Only memoize functions if they match this intended usage and performance pattern.
+
+**Note:** `useMemo(..)` does not pass any arguments when invoking the function. The memoized function must therefore already have access to any necessary "inputs", either by closure or some other means, and should use only those inputs to produce its output. A memoized function should always return the same output given the same *state* of all its inputs. Otherwise, any expected differing output would not be returned, which would almost certainly cause bugs in the program.
+
+For example:
+
+<NewEditor id="useMemo-1" 
+codeString={`function computeMeaningOfLife() {
+    // ..
+    console.log("Computing...");
+    return 42;
+}
+
+function askTheQuestion() {
+    var v = useMemo(computeMeaningOfLife);
+    return v;
+}
+
+askTheQuestion = TNG(askTheQuestion);
+
+askTheQuestion();       // Computing...
+                        // 42
+askTheQuestion();       // 42`}
+client:only="react"
+
+/>
+
+In this snippet, the first invocation of `askTheQuestion()` invokes the `computeMeaningOfLife()` function. But on the second invocation of `askTheQuestion()`, the memoized `42` output is returned without invoking `computeMeaningOfLife()`.
+
+In that above snippet, across both invocations, the exact same function reference of `computeMeaningOfLife` is passed to `useMemo(..)`. But each time a different function reference is passed, it will be invoked.
+
+In the following snippet, the `computeMeaningOfLife()` is a nested function -- in this case, an inline function expression -- and is thus different for each invocation of `askTheQuestion()`. As a result, `computeMeaningOfLife()` is always invoked, defeating the whole point of memoization:
+
+<NewEditor id="useMemo-2" 
+codeString={`function askTheQuestion() {
+    var v = useMemo(function computeMeaningOfLife() {
+        // ..
+        console.log("Computing...");
+        return 42;
+    });
+    return v;
+}
+
+askTheQuestion = TNG(askTheQuestion);
+
+askTheQuestion();       // Computing...
+                        // 42
+askTheQuestion();       // Computing...
+                        // 42`}
+client:only="react"
+
+/>
+
+It appears as if nested (inside the Articulated Function) functions -- whether inline expressions or just inner function declarations -- cannot be usefully memoized, which seems like a major drawback!
+
+<a name="inputguards"></a>
+
+However, this nested function drawback can be addressed. Similar to [conditional effects via the optional second argument to `useEffect(..)`](#conditional-effects), `useMemo(..)` accepts an optional second argument: an input-guards list.
+
+While the input-guards list is strictly optional, you will probably want to use it most of the time, especially since it enables proper memoization of nested functions.
+
+For example:
+
+<NewEditor id="useMemo-2" 
+codeString={`
+function getW(x,y) {
+    var z = 3 * (x + y);
+
+    var w = useMemo(function computeW(){
+        return x * y / z;
+    },[x,y,z]);
+
+    return w;
+}
+
+getW = TNG(getW);
+
+getW(3,5);      // 0.625
+getW(3,5);      // 0.625 -- memoized!
+getW(4,6);      // 0.8
+`}
+client:only="react"
+
+/>
+
+The `[x,y,z]` array in this snippet acts as the input-guards list for the memoized `computeW()` nested function.
+
+The first invocation of `getW(..)` passes `[3,5,24]` as the input-guards list to `useMemo(..)`, and which invokes the function, producing the `0.625` output. The second invocation of `getW(..)` passes the same input-guards list values (`3`, `5`, and `24`) into `useMemo(..)`, so the `computeW()` function is not invoked, and the previous return value of `0.625` is simply returned. The third invocation of `getW(..)` passes in `[4,6,30]` as the input-guards list, so `computeW()` is now invoked again, this time producing `0.8`.
+
+Though it may be tempting to think of the input-guards list as "conditional memoization", similar to [conditional effects](#conditional-effects) based on their guards list, the meaning here is slightly different. It is still conditional invocation, but with a different motivation.
+
+The memoization input-guards list should contain all the memoized function's "inputs": any value the function relies on, that might change over time. These values are not actually passed in as arguments; they just represent "inputs" conceptually, not directly.
+
+The values in this list should not be thought of as conditionally invoking the memoized function, but rather as deciding if the function *would* produce a new value if invoked.
+
+If any of the input-guards have changed, the assumption is that the memoized function would produce a new output, so it *should* be invoked to get that new output. But if they haven't changed, the assumption is that the already memoized output value is still the expected return value, so the memoized function can safely be skipped.
+
+In other words, the better mental model here is: **the input-guards list determines if the current memoized value is still valid or not.**
+
+Similar to [`useEffect(..)`](#user-content-emptyguards), always passing an empty input-guards list `[]` to `useMemo(..)` ensures that the memoized function will only ever be invoked once. Also similar to the [discussion of using the same guards list for `useEffect(..)`](#user-content-effectsameguards), it's best practice that if you pass an input-guards list to `useMemo(..)`, always pass the same list (even though its values may change).
+
+**Note:** As shown above, passing an input-guards list produces the memoization behavior (conditional skipping) even for a nested function, which addresses the previously discussed drawback. Further, if you omit the input-guards list (not just passing the `[]` empty list!), the function reference itself becomes the only input-guard. So, if the function is exactly the same reference each time, its memoized output value will always be returned. But if the function reference is different each time (as it is with nested functions), it always has to be invoked. **Bottom Line: Only omit the input-guards list if you will always be passing the same function reference.**
