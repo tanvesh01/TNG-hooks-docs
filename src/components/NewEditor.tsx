@@ -36,7 +36,6 @@ const NewEditor: React.FC<{ codeString: string; id: string }> = ({
   codeString,
   id,
 }) => {
-  console.log(codeString, 'CODESTRING');
   useEffect(() => {
     let parsedASTData: BabelReponseInterface;
 
@@ -65,7 +64,7 @@ const NewEditor: React.FC<{ codeString: string; id: string }> = ({
             // this parses the content from the data given by the AST
             const content = CONTENT_GENERATORS[
               name as keyof typeof parsedASTData
-            ](parsedASTData.useEffect[index], parsedASTData);
+            ](parsedASTData[name][index], parsedASTData);
 
             returnedObject = {
               pos: start,
@@ -104,7 +103,6 @@ const NewEditor: React.FC<{ codeString: string; id: string }> = ({
 
     parseCode(codeString).then((res) => {
       parsedASTData = res;
-      console.log(res, 'res of parseCode');
       /*
           Takes all the AST data from babel and loops through to it
           underline all the selections

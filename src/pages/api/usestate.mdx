@@ -41,7 +41,7 @@ For example:
 
 <NewEditor id="useState-2" 
 codeString={`function hit() {
-    var [count,updateCount] = useState(0);
+    var [count, updateCount] = useState(0);
 
     updateCount(onUpdateCount);
 }
@@ -63,7 +63,7 @@ This approach is helpful for determining the new state unit value based on its c
 In this particular example, the line `updateCount(onUpdateCount)` could also have been written with the same outcome as:
 
 <NewEditor id="useState-3" 
-codeString={`updateCount( onUpdateCount(count) );`}
+codeString={`updateCount(onUpdateCount(count));`}
 client:only="react"
 />
 

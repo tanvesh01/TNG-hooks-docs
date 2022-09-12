@@ -94,6 +94,24 @@ ${
   }
 };
 
+const constructSentenceFromArrayOfStrings = (arr: string[]): string => {
+  if (arr.length === 1) {
+    return `\`${arr[0]}\``;
+  }
+  let temp = '';
+  if (arr.length > 1) {
+    arr.forEach((identifier, index) => {
+      // if last element
+      if (index === arr.length - 1) {
+        temp = temp + 'and ' + `\`${identifier}\``;
+      } else {
+        temp = temp + `\`${identifier}\`` + ', ';
+      }
+    });
+  }
+  return temp;
+};
+
 export const getUseImageOnLoadContent = () => {
   return micromark(`
   ## useImageOnLoad
@@ -102,7 +120,30 @@ A simple React Hook that helps you improve UX while images are loading. Rather t
 `);
 };
 
+const getTNGContent = (res) => {
+  const argumentsArray = res?.arguments.map(({ name }) => name);
+  return micromark(`
+  \`TNG(..)\` is a utility to produce Articulated Functions from normal, stanadlone functions. Articulated Functions adopt an active hooks-context to enable hooks capabilities.
+  
+  ${
+    argumentsArray
+      ? argumentsArray.length > 0 &&
+        `For example here, ${constructSentenceFromArrayOfStrings(
+          argumentsArray
+        )}  will be decorated with a TNG hooks-context which means hooks are valid to use during its invocation`
+      : ''
+  } 
+  `);
+};
+
+const getUseStateContent = () =>
+  micromark(`
+  The TNG \`useState(..)\` hook, like [React's \`useState(..)\` hook](https://reactjs.org/docs/hooks-state.html), allows an Articulated Function to persist a unit of state across multiple invocations, without relying on global variables or having to manually create a closure to store that state.
+`);
+
 export const CONTENT_GENERATORS = {
   useEffect: getSentenceContent,
   useImageOnLoad: getUseImageOnLoadContent,
+  TNG: getTNGContent,
+  useState: getUseStateContent,
 };
