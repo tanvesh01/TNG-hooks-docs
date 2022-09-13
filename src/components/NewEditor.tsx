@@ -6,13 +6,9 @@ import { javascript } from '@codemirror/lang-javascript';
 import React, { useEffect } from 'react';
 import { parseCode } from './utils';
 
-import {
-  oneDark,
-  oneDarkHighlightStyle,
-  oneDarkTheme,
-} from '@codemirror/theme-one-dark';
+import { oneDark, oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
 import { underlineSelection } from './editorUtils';
-import { CONTENT_GENERATORS, getSentenceContent } from './utils';
+import { CONTENT_GENERATORS } from './utils';
 import { popOverStyles } from './editorStyles';
 
 const syntaxExtension = syntaxHighlighting(oneDarkHighlightStyle);
@@ -42,9 +38,6 @@ const NewEditor: React.FC<{ codeString: string; id: string }> = ({
     /*
       Logic that decides if a keyword can be hovered to
       render our popover.
-
-      TODO: Right now the we are parsing data of our AST is obviously 
-      very static, gotta make this a generic function.
     */
     const wordHover = hoverTooltip((view, pos, side) => {
       let { from, to, text, number: lineNumber } = view.state.doc.lineAt(pos);
@@ -58,14 +51,13 @@ const NewEditor: React.FC<{ codeString: string; id: string }> = ({
       const keyword = text.slice(start - from, end - from);
 
       let returnedObject = null;
-      Object.keys(parsedASTData).forEach((name, index) => {
-        parsedASTData[name].forEach(({ startLineNumber }) => {
+      Object.keys(parsedASTData).forEach((name) => {
+        parsedASTData[name].forEach(({ startLineNumber }, index) => {
           if (lineNumber === startLineNumber) {
             // this parses the content from the data given by the AST
             const content = CONTENT_GENERATORS[
               name as keyof typeof parsedASTData
             ](parsedASTData[name][index], parsedASTData);
-
             returnedObject = {
               pos: start,
               end,
@@ -103,6 +95,7 @@ const NewEditor: React.FC<{ codeString: string; id: string }> = ({
 
     parseCode(codeString).then((res) => {
       parsedASTData = res;
+      console.log(res, 'parseCode');
       /*
           Takes all the AST data from babel and loops through to it
           underline all the selections

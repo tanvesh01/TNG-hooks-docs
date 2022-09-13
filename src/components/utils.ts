@@ -136,10 +136,11 @@ const getTNGContent = (res) => {
   `);
 };
 
-const getUseStateContent = () =>
-  micromark(`
+const getUseStateContent = () => {
+  return micromark(`
   The TNG \`useState(..)\` hook, like [React's \`useState(..)\` hook](https://reactjs.org/docs/hooks-state.html), allows an Articulated Function to persist a unit of state across multiple invocations, without relying on global variables or having to manually create a closure to store that state.
 `);
+};
 
 export const CONTENT_GENERATORS = {
   useEffect: getSentenceContent,

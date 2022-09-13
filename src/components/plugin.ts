@@ -3,10 +3,7 @@ import jsx from '@babel/plugin-syntax-jsx';
 import { CONTENT_GENERATORS } from './utils';
 
 function constructorFunction(path, key) {
-  console.log(path, key);
   if (path.node.callee.name === key) {
-    console.log(`DETECTED ${key}`, path);
-
     this.data[key] = [
       ...(this.data[key] || []),
       {

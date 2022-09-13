@@ -34,7 +34,7 @@ For example:
 <NewEditor id="quick-example-1" 
 
 codeString={`// generating Articulated Functions (aka, wrapping with TNG hooks-context)
-[renderUsername,onClickUsername] = TNG(renderUsername,onClickUsername);
+[renderUsername,onClickUsername] = TNG(renderUsername, onClickUsername);
 
 function renderUsername(username) {
     // using the useState(..) hook
@@ -45,7 +45,7 @@ function renderUsername(username) {
     // only run this code the first time
     if (!activated) {
         setActivated(true);
-        usernameElem.addEventListener("click",onClickUsername,false);
+        usernameElem.addEventListener("click", onClickUsername, false);
     }
 }
 
@@ -92,7 +92,7 @@ codeString={`function renderUsername(username) {
     // using the useEffect(..) hook
     useEffect(function onActivate(){
         usernameElem = document.getElementById("username");
-        usernameElem.addEventListener("click",onClickUsername,false);
+        usernameElem.addEventListener("click", onClickUsername, false);
 
         setElem(usernameElem);
     },[]);
