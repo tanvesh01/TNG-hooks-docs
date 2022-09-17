@@ -1,5 +1,78 @@
 body {
-    margin: 0;
-    background-color: #151518;
-    color: #2c2c2c;
+  margin: 0;
+  background-color: #151518;
+  color: #2c2c2c;
+}
+
+.main-container {
+  display: grid;
+  grid-template-columns: 200px 2fr;
+  font-family: 'Inter', sans-serif;
+}
+
+.sidebar-container {
+  background: #151518;
+  height: 100%;
+  padding: 20px 0 0 15px;
+}
+
+.sidebar-link {
+  display: block;
+  color: #ceeaff;
+  text-decoration: none;
+  padding: 10px;
+}
+
+.sidebar-link .active {
+  background-color: #052945;
+}
+.sidebar-link:hover {
+  background-color: #052945;
+}
+
+/* styling of the actual content of blogs */
+.main-content-container {
+  padding: 5px 33px;
+  margin: 15px;
+  background-color: White;
+  border-radius: 10px;
+  line-height: 28px;
+  box-shadow: rgb(50 50 93 / 14%) 0px 2px 11px 0px,
+    rgb(0 0 0 / 20%) 0px 1px 3px -1px;
+}
+
+.main-content-container a {
+  border-bottom: 1px solid #0c7acc70;
+  text-decoration: none;
+  color: #0c7acc;
+  font-weight: 600;
+  transition: all 150ms ease 0s;
+}
+
+.main-content-container a:hover {
+  border-color: #0c7acc;
+  border-width: 2px;
+}
+
+.main-content-container code {
+  border: 1px solid #e3e3e3;
+  box-shadow: rgb(0 0 0 / 4%) 0px 2px 0px;
+  padding: 1px 3px;
+  border-radius: 4px;
+  background: rgb(164 207 255 / 10%);
+  font-family: 'JetBrains Mono', monospace;
+  margin: 0 3px;
+  color: #005076;
+}
+.main-content-container strong {
+  font-weight: 600;
+}
+
+.main-content-container h2 {
+  letter-spacing: -0.02em;
+  font-size: 3.5rem;
+}
+.main-content-container h3 {
+  letter-spacing: -0.02em;
+  font-size: 2rem;
 }

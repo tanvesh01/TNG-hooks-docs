@@ -74,9 +74,8 @@ const SidebarItemContainer = styled('ul', {
   },
 });
 
-const SidebarItem = styled('li', {
+const SidebarListItem = styled('li', {
   listStyle: 'none',
-  padding: '10px',
   borderRadius: 5,
   fontWeight: '600',
   letterSpacing: '-0.02em',
@@ -106,6 +105,28 @@ const SidebarItem = styled('li', {
   },
 });
 
+const StyledListLink = styled('a', {
+  display: 'block',
+  width: '100%',
+  padding: '10px',
+});
+
+const SidebarItem: React.FC<{
+  link: string | undefined;
+  isHeading: boolean | undefined;
+  children: string;
+}> = ({ isHeading, link, children }) => {
+  return (
+    <SidebarListItem isHeading={isHeading}>
+      {link ? (
+        <StyledListLink href={link}>{children}</StyledListLink>
+      ) : (
+        children
+      )}
+    </SidebarListItem>
+  );
+};
+
 const SidebarItemWithChildren = ({
   parentLabel,
   children,
@@ -126,10 +147,10 @@ const LayoutContainer: React.FC<{ children: JSX.Element }> = ({ children }) => {
         <SidebarItemContainer>
           <SidebarItem active>Introduction</SidebarItem>
           <SidebarItemWithChildren parentLabel={'API'}>
-            <SidebarItem>useState</SidebarItem>
-            <SidebarItem>useReducer</SidebarItem>
-            <SidebarItem>useCallback</SidebarItem>
-            <SidebarItem>useEffect</SidebarItem>
+            <SidebarItem link="/api/usestate">useState</SidebarItem>
+            <SidebarItem link="/api/usereducer">useReducer</SidebarItem>
+            <SidebarItem link="/api/usecallback">useCallback</SidebarItem>
+            <SidebarItem link="/api/useeffect">useEffect</SidebarItem>
           </SidebarItemWithChildren>
         </SidebarItemContainer>
       </Sidebar>

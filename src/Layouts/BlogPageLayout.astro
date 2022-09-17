@@ -1,24 +1,34 @@
 ---
-import LayoutContainer from "../components/LayoutComponents/LayoutContainer"
+import LayoutContainer from '../components/LayoutComponents/LayoutContainer';
 // 1. The frontmatter prop gives access to frontmatter and other data
 const { frontmatter } = Astro.props;
-import "../styles/global.css"
+import '../styles/global.css';
 ---
+
 <html>
   <head>
     <!-- Add other Head elements here, like styles and meta tags. -->
     <title>{frontmatter.title}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-		<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <LayoutContainer client:visible  >
-        <slot />
-    </LayoutContainer>
-    
+    <main class="main-container">
+      <aside class="sidebar-container">
+        <a href="/intro" class="sidebar-link">Introduction</a>
+        <p>API</p>
+      </aside>
+      <div class="main-content-container"><slot /></div>
+    </main>
+
     <!-- 2. Rendered HTML will be passed into the default slot. -->
     <p>Written on: {frontmatter.date}</p>
   </body>
