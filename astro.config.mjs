@@ -6,5 +6,4 @@ import mdx from '@astrojs/mdx';
 export default defineConfig({
   // Enable React to support React JSX components.
   integrations: [react(), mdx()],
-  output: 'server',
 });
