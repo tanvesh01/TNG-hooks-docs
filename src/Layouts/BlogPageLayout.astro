@@ -1,8 +1,63 @@
 ---
-import LayoutContainer from '../components/LayoutComponents/LayoutContainer';
 // 1. The frontmatter prop gives access to frontmatter and other data
 const { frontmatter } = Astro.props;
 import '../styles/global.css';
+
+const pathname = new URL(Astro.request.url).pathname;
+
+const API_PAGES = [
+  {
+    label: 'TNG(..)',
+    link: '/api/tng',
+    isActive: function () {
+      return this.link === pathname ? 'active' : '';
+    },
+  },
+  {
+    label: 'useState(..)',
+    link: '/api/usestate',
+    isActive: function () {
+      return this.link === pathname ? 'active' : '';
+    },
+  },
+  {
+    label: 'useReducer(..)',
+    link: '/api/usereducer',
+    isActive: function () {
+      return this.link === pathname ? 'active' : '';
+    },
+  },
+  {
+    label: 'useEffect(..)',
+    link: '/api/useeffect',
+    isActive: function () {
+      return this.link === pathname ? 'active' : '';
+    },
+  },
+  {
+    label: 'useMemo(..)',
+    link: '/api/usememo',
+    isActive: function () {
+      return this.link === pathname ? 'active' : '';
+    },
+  },
+  {
+    label: 'useCallback(..)',
+    link: '/api/usecallback',
+    isActive: function () {
+      return this.link === pathname ? 'active' : '';
+    },
+  },
+  {
+    label: 'useRef(..)',
+    link: '/api/useref',
+    isActive: function () {
+      return this.link === pathname ? 'active' : '';
+    },
+  },
+];
+
+console.log(API_PAGES[0].isActive());
 ---
 
 <html>
@@ -25,11 +80,15 @@ import '../styles/global.css';
       <aside class="sidebar-container">
         <a href="/intro" class="sidebar-link">Introduction</a>
         <p>API</p>
+        {
+          API_PAGES.map((data) => (
+            <a href={data.link} class={`sidebar-link ${data.isActive()}`}>
+              <code> {data.label}</code>
+            </a>
+          ))
+        }
       </aside>
       <div class="main-content-container"><slot /></div>
     </main>
-
-    <!-- 2. Rendered HTML will be passed into the default slot. -->
-    <p>Written on: {frontmatter.date}</p>
   </body>
 </html>

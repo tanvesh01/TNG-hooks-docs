@@ -20,19 +20,18 @@ codeString={`// wrap one function at a time
 foo = TNG(foo);
 
 // or, wrap multiple functions at once
-[bar,baz] = TNG(bar,baz);
+[bar, baz] = TNG(bar, baz);
 
-function foo(..) { .. }
-function bar(..) { .. }
-function baz(..) { .. }
-`}
+function foo() {  }
+function bar() {  }
+function baz() {  }`}
 client:only="react"
 />
 The same function can actually be Articulated multiple times, with each one getting its own separate TNG hooks-context:
 
-<NewEditor id="TNG-2"  codeString={`function foo(..) { .. }
+<NewEditor id="TNG-2"  codeString={`function foo() {  }
 
-var [A,B] = TNG(foo,foo);
+var [A, B] = TNG(foo, foo);
 var C = TNG(foo);
 
 // later:
@@ -54,8 +53,7 @@ For example:
 
 
 <NewEditor id="TNG-3"
-codeString={`
-function hit() {
+codeString={`function hit() {
     var [count,updateCount] = useState(0);
 
     count++;
@@ -70,8 +68,7 @@ hit();       // Hit count: 3
 
 hit.reset();
 
-hit();       // Hit count: 1
-`}
+hit();       // Hit count: 1`}
 
  client:only="react"
 />

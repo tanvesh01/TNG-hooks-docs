@@ -52,6 +52,23 @@ body {
 .main-content-container a:hover {
   border-color: #0c7acc;
   border-width: 2px;
+  border-radius: 6px;
+}
+
+.sidebar-link code {
+  box-shadow: rgb(0 0 0 / 4%) 0px 2px 0px;
+  padding: 1px 3px;
+  border-radius: 4px;
+  background: rgb(164 207 255 / 10%);
+  font-family: 'JetBrains Mono', monospace;
+  margin: 0 3px;
+}
+
+.sidebar-link.active {
+  border-color: #0c7acc;
+  border-width: 2px;
+  background-color: #052945;
+  border-radius: 6px;
 }
 
 .main-content-container code {
@@ -64,6 +81,7 @@ body {
   margin: 0 3px;
   color: #005076;
 }
+
 .main-content-container strong {
   font-weight: 600;
 }
