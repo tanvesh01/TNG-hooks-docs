@@ -55,15 +55,25 @@ const API_PAGES = [
       return this.link === pathname ? 'active' : '';
     },
   },
+  {
+    label: 'useCustomHooks',
+    link: '/api/customhook',
+    isActive: function () {
+      return this.link === pathname ? 'active' : '';
+    },
+  },
 ];
-
-console.log(API_PAGES[0].isActive());
 ---
 
 <html>
   <head>
     <!-- Add other Head elements here, like styles and meta tags. -->
-    <title>{frontmatter.title}</title>
+    <title>{frontmatter.title} | TNG-hooks docs</title>
+    <meta name="description" content={frontmatter.description} />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -79,7 +89,7 @@ console.log(API_PAGES[0].isActive());
     <main class="main-container">
       <aside class="sidebar-container">
         <a href="/intro" class="sidebar-link">Introduction</a>
-        <p>API</p>
+        <p class="sidebar-section-heading">API</p>
         {
           API_PAGES.map((data) => (
             <a href={data.link} class={`sidebar-link ${data.isActive()}`}>
@@ -90,5 +100,36 @@ console.log(API_PAGES[0].isActive());
       </aside>
       <div class="main-content-container"><slot /></div>
     </main>
+    <footer class="main-container">
+      <div></div>
+      <div class="footer-row">
+        <div>
+          Content and Library's credit goes to <a
+            class="footer-link"
+            href="https://github.com/getify">Kyle Simpsons (@getify)</a
+          >
+        </div>
+        <div>
+          Docs built with {'<3'} and a <b>lot</b> of experiments by <a
+            class="footer-link"
+            href="https://github.com/getify">Tanvesh Sarve (@tanvesh01)</a
+          >
+        </div>
+        <div>
+          Source: <a
+            class="footer-link"
+            href="https://github.com/tanvesh01/TNG-hooks-docs"
+            >TNG-hooks-docs
+          </a>(powered by <a class="footer-link" href="https://astro.build/"
+            >astro</a
+          >, <a class="footer-link" href="https://babeljs.io/"> babel</a>, and <a
+            class="footer-link"
+            href="https://codemirror.net/"
+          >
+            codemirror</a
+          >)
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

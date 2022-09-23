@@ -142,9 +142,16 @@ const getUseStateContent = () => {
 `);
 };
 
+const getHitCounterContent = () => {
+  return micromark(
+    `The \`useHitCounter(..)\` Custom Hook -- again, just a normal non-Articulated Function that uses a TNG hook like \`useState(..)\`! -- inherits the TNG hooks-context of the Articulated Function that invoked it. In this example, the invoking Articulated Function is either one of the two click handlers (produced via the two \`TNG(..)\` calls) that were bound, respectively, as each button's click handler.`
+  );
+};
+
 export const CONTENT_GENERATORS = {
   useEffect: getSentenceContent,
   useImageOnLoad: getUseImageOnLoadContent,
   TNG: getTNGContent,
   useState: getUseStateContent,
+  useHitCounter: getHitCounterContent,
 };

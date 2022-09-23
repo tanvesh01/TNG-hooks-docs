@@ -1,0 +1,174 @@
+---
+layout: ../../Layouts/BlogPageLayout.astro
+title: useEffect
+description: My first blog post!
+---
+import NewEditor from '../../components/NewEditor';
+export const templatingString = "Hit count: ${count + 1}";
+
+
+### `useEffect(..)` Hook
+
+Like [React's `useEffect(..)` hook](https://reactjs.org/docs/hooks-effect.html), the TNG `useEffect(..)` hook will conditionally run side-effect code "after" the current Articulated Function completes its invocation.
+
+For example:
+
+<NewEditor id="useEffect-1" 
+
+codeString={`function hit() {
+    var [count, updateCount] = useState(0);
+
+    updateCount(onUpdateCount);
+
+    useEffect(function logAfter(){
+        console.log(\`${templatingString}\`);
+    });
+
+    console.log("Hit!");
+}
+
+function onUpdateCount(oldCount) {
+    return oldCount + 1;
+}
+
+hit = TNG(hit);
+
+hit();       // Hit!
+             // Hit count: 1
+hit();       // Hit!
+             // Hit count: 2
+hit();       // Hit!
+             // Hit count: 3`}
+client:only="react"
+
+/>
+
+Notice in the above snippet that despite the lexical ordering, the `console.log("Hit!")` is actually executed *before* the effect has a chance to run and log its message. That's because an effect, which is generally useful for side-effects, is run *after* the current invocation of the Articulated Function is complete, as if it appeared in a `finally { .. }` clause.
+
+This doesn't mean async (or sync) behavior, only that it's "deferred" until "after" the Articulated Function completes. These relative terms are deliberately being left abstract at present, to allow for future evolution of TNG's functionality.
+
+**CRITICAL NOTE:** DO NOT rely on any observed synchronous/asynchronous behavior of effects, nor any observed ordering between effects. Effects should always be treated as completely independent of each other. In the future, some effects may actually run asynchronously, which would likely affect the ordering between effects.
+
+### Conditional Effects
+
+A conditional effect is invoked only under certain conditions, which can be quite useful in a variety of scenarios.
+
+The most common scenario is when an effect involves costly DOM operations; for performance reasons, you'd only want those DOM operations to be processed if that part of the DOM actually needed to be updated because some related state values had changed. If the state values haven't changed, a conditional effect prevents the unnecessary DOM operations by skipping the effect.
+
+The `useEffect(..)` utility accepts an optional second argument, which is a list of values to guard whether the effect should be invoked. See also the related discussion of the [input-guards list for `useMemo(..)`](#user-content-inputguards).
+
+`useEffect(..)`'s guards list is optional because sometimes effects should be invoked every time. As shown above, if the guards list is omitted, the effect is always invoked:
+
+<NewEditor id="useEffect-2" 
+
+codeString={`function updateCounter(count) {
+    useEffect(function onUpdate(){
+        // unconditional effect, runs every time
+    });
+}
+
+updateCounter = TNG(updateCounter);`}
+client:only="react"
+
+/>
+
+But in some cases, conditional guards can be quite helpful for performance optimizations (e.g., preventing unnecessary invocations of an effect).
+
+If the guards list is provided and includes any values, the list's current values are compared to the previous guards list values provided when the effect was last invoked; the conditional effect is invoked only if a value in the guards list has changed from before, or if this is the first invocation of that conditional effect; otherwise the effect invocation is skipped.
+
+<a name="emptyguards"></a>
+
+As a special case of this conditional guards list behavior, passing an empty list (`[]`) *every time* is the most straight-forward way to ensure an effect runs only once, the first time:
+
+<NewEditor id="useEffect-2" 
+
+codeString={`function renderButton(label) {
+    // only run this effect once, initially
+    useEffect(function onSetup(){
+        buttonElem.addEventListener("click", onClick);
+    },[]);
+
+    // ..
+}
+
+renderButton = TNG(renderButton);`}
+client:only="react"
+
+/>
+
+The list of values you pass as the conditional guards should be any (and all!) state values that the effect depends on.
+
+For example, if an effect function closes over (uses) two variables, `name` and `age`, then the effect's conditional guards list should include both of them (as `[name,age]`). Thus, the effect will only be invoked if either `name` or `age` (or both) have changed since the last time the effect was actually invoked.
+
+<NewEditor id="useEffect-3" 
+
+codeString={`function renderPerson(person) {
+    var { name, age } = person;
+
+    useEffect(function onChanged(){
+        nameElem.innerText = name;
+        ageElem.innerText = age;
+    },[name,age]);
+}
+
+renderPerson = TNG(renderPerson);`}
+client:only="react"
+
+/>
+
+As stated, the use of the guards list **is optional**. But if you choose to pass the guards list, it's a very good idea and *best practice* to always **pass the same fixed guards list** to each invocation of a conditional effect (even though the values in the list will change).
+
+In other words, avoid dynamically constructing and passing different guards lists (or sometimes no guards list at all) to the same conditional effect across different invocations. This would lead to very confusing behavior and be more susceptible to bugs. Moreover, it's likely to be rare for an effect to depend on different state values on subsequent invocations; try to avoid this if possible, perhaps by breaking into separate conditional effects, each with their own fixed guards list.
+
+### Effect Cleanups
+
+Effects do not receive any arguments, and their return values are generally ignored, with one exception. If an effect returns another function, that function is assumed to be a "cleanup function" for the effect. In other words, each effect can optionally define a cleanup function, which performs any necessary cleanup before the next invocation of that effect.
+
+For example, if an effect assigns a DOM event handler, and the effect may run multiple times, subsequent invocations of the effect would otherwise be duplicating the event handling (which is likely to lead to bugs). To avoid this problem, define a cleanup function for the effect:
+
+<NewEditor id="useEffect-4" 
+
+codeString={`function renderButton(label) {
+    useEffect(function onSetup(){
+        buttonElem.addEventListener("click",onClick);
+
+        return function onCleanup(){
+            buttonElem.removeEventListener("click", onClick);
+        };
+    });
+
+    // ..
+}
+
+renderButton = TNG(renderButton);`}
+client:only="react"
+
+/>
+
+The first time the Articulated Function `renderButton(..)` is invoked, the `onSetup()` effect will subscribe its event listener. The `onCleanup()` cleanup function returned from the effect will be saved by TNG internally. The next time `renderButton(..)` is invoked (and thus the `onSetup()` effect is invoked), the saved previous `onCleanup()` function will *first* be triggered -- in this example, unsubscribing the event listener and preventing a subsequent double event subscription.
+
+**Note:** Since effects are not invoked until *after* the Articulated Function is complete, that means the cleanup function saved from the previous invocation of an effect will also not be triggered until *after* the current invocation of the Articulated Function is complete.
+
+Each invocation of an effect triggers its own previous cleanup (if any). But the "final"  invocation of a cleanup -- whenever the Articulated Function (and its effects) won't be invoked anymore -- would obviously not have anything to trigger it. If the cause of this *final state* is the end of the lifetime of the program/browser page, this is likely not a problem.
+
+But if you need to ensure manually that any pending *final* cleanup(s) are actually triggered, the [`reset()` method of the Articulated Function](#resetting-hooks-context) will trigger any pending cleanups.
+
+For example:
+
+<NewEditor id="useEffect-5" 
+
+codeString={`renderButton("Click Me");
+
+// ..
+
+// operation pending, change button to an "undo"
+renderButton("Undo...");
+
+// ..
+
+// operation complete, button being disabled/removed
+renderButton.reset();`}
+client:only="react"
+
+/>
+Keep in mind that `reset()` also resets the internal TNG hooks-context of the Articulated Function, including all state slots, effects, etc.
