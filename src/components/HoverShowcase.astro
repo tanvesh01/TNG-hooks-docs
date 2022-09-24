@@ -1,0 +1,85 @@
+---
+---
+
+<style>
+  /* scoped to the component, other H1s on the page remain the same */
+  .showcase-conatiner {
+    margin-top: 2rem;
+    position: relative;
+    border-left: 5px solid #7eb6ff;
+    padding: 1.7rem;
+    border-radius: 6px;
+    background: #edf3fb;
+    max-width: 780px;
+  }
+
+  .showcase-conatiner code {
+    border-bottom: 2px dashed #13d21d;
+  }
+
+  h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 1.5rem;
+  }
+
+  p {
+    color: #0a0c10;
+  }
+
+  .sidenote-icon-container {
+    color: #7eb6ff;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    transform: translate(calc(-50% - 1.5px), -50%);
+    padding: 8px;
+    background: white;
+    border-radius: 50%;
+  }
+
+  svg {
+    display: block;
+  }
+  img {
+    display: block;
+    border-radius: 4px;
+  }
+</style>
+
+<div class="showcase-conatiner">
+  <div class="sidenote-icon-container">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="32"
+      height="32"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      ><circle cx="12" cy="12" r="10"></circle><line
+        x1="12"
+        y1="16"
+        x2="12"
+        y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </svg>
+  </div>
+  <h4>A new way to read docs!</h4>
+  <p>
+    Just Hover on pieces of code that are highlighted like <code>this</code> and
+    just read about it! Instead of just looking at a bunch of boring text and scrolling
+    up and down :)
+  </p>
+  <p>
+    To read more about how this works check this <a
+      href="https://github.com/tanvesh01/experimental-hover-docs">repo out!</a
+    > or you can always check out the <a
+      href="https://github.com/tanvesh01/TNG-hooks-docs"
+      >source of these docs!</a
+    >
+  </p>
+  <img src="https://media.giphy.com/media/bIw7kSxP0tgrulXXaV/giphy.gif" />
+</div>

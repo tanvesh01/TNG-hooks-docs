@@ -3,6 +3,9 @@ import jsx from '@babel/plugin-syntax-jsx';
 import { CONTENT_GENERATORS } from './utils';
 
 function constructorFunction(path, key) {
+  if (path.node.callee.name === 'useEffect') {
+    console.log(path);
+  }
   if (path.node.callee.name === key) {
     this.data[key] = [
       ...(this.data[key] || []),

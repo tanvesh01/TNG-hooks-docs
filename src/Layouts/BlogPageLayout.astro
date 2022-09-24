@@ -88,7 +88,9 @@ const API_PAGES = [
   <body>
     <main class="main-container">
       <aside class="sidebar-container">
-        <a href="/intro" class="sidebar-link">Introduction</a>
+        <a href="/" class={`sidebar-link ${pathname === '/' ? 'active' : ''}`}
+          >Introduction</a
+        >
         <p class="sidebar-section-heading">API</p>
         {
           API_PAGES.map((data) => (

@@ -53,16 +53,17 @@ export const getSentenceContent = (
 ) => {
   const dependencyTree: { [key: string]: number } = {};
   res.useEffect.forEach((effect) => {
-    effect.dependencies.forEach(({ name }) => {
+    effect?.dependencies?.forEach(({ name }) => {
       dependencyTree[name] = dependencyTree[name] + 1 || 1;
     });
   });
   let finalContent = `
-  ## useEffect
+  ### useEffect
   The Effect Hook lets you perform side effects in function components.
+  Like [React's \`useEffect(..)\` hook](https://reactjs.org/docs/hooks-effect.html), the TNG \`useEffect(..)\` hook will conditionally run side-effect code "after" the current Articulated Function completes its invocation.
 
   This useEffect depends on `;
-  const dependenciesArray = useEffectData.dependencies;
+  const dependenciesArray = useEffectData.dependencies || [];
   console.log(dependenciesArray, 'DEPE ARRAY', res);
 
   // TODO: make this work for more than 3 items in array

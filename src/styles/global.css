@@ -85,12 +85,18 @@ body {
   font-weight: 600;
 }
 
-.main-content-container h2 {
+h1,
+h2,
+h3,
+h4,
+h5 {
   letter-spacing: -0.02em;
+}
+
+.main-content-container h2 {
   font-size: 3.5rem;
 }
 .main-content-container h3 {
-  letter-spacing: -0.02em;
   font-size: 2rem;
 }
 
@@ -113,7 +119,7 @@ footer {
 }
 
 .footer-link {
-  color: #a0a0a0;
+  color: #79c5ff;
   transition: all 0.3s;
 }
 
