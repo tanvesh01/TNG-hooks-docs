@@ -7,13 +7,19 @@ body {
 .main-container {
   display: grid;
   grid-template-columns: 200px 2fr;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .sidebar-container {
   background: #151518;
   height: 100%;
   padding: 20px 0 0 15px;
+}
+
+.sidebar-items-wrapper {
+  position: sticky;
+  top: 0;
+  padding-top: 12px;
 }
 
 .sidebar-link {
@@ -59,7 +65,7 @@ body {
   padding: 1px 3px;
   border-radius: 4px;
   background: rgb(164 207 255 / 10%);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
   margin: 0 3px;
 }
 
@@ -76,7 +82,7 @@ body {
   padding: 1px 3px;
   border-radius: 4px;
   background: rgb(164 207 255 / 10%);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
   margin: 0 3px;
   color: #005076;
 }
