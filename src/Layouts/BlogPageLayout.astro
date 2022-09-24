@@ -1,5 +1,4 @@
 ---
-// 1. The frontmatter prop gives access to frontmatter and other data
 const { frontmatter } = Astro.props;
 import '../styles/global.css';
 
@@ -88,17 +87,19 @@ const API_PAGES = [
   <body>
     <main class="main-container">
       <aside class="sidebar-container">
-        <a href="/" class={`sidebar-link ${pathname === '/' ? 'active' : ''}`}
-          >Introduction</a
-        >
-        <p class="sidebar-section-heading">API</p>
-        {
-          API_PAGES.map((data) => (
-            <a href={data.link} class={`sidebar-link ${data.isActive()}`}>
-              <code> {data.label}</code>
-            </a>
-          ))
-        }
+        <div class="sidebar-items-wrapper">
+          <a href="/" class={`sidebar-link ${pathname === '/' ? 'active' : ''}`}
+            >Introduction</a
+          >
+          <p class="sidebar-section-heading">API</p>
+          {
+            API_PAGES.map((data) => (
+              <a href={data.link} class={`sidebar-link ${data.isActive()}`}>
+                <code> {data.label}</code>
+              </a>
+            ))
+          }
+        </div>
       </aside>
       <div class="main-content-container"><slot /></div>
     </main>

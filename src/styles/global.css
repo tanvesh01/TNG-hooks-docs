@@ -16,6 +16,11 @@ body {
   padding: 20px 0 0 15px;
 }
 
+.sidebar-items-wrapper {
+  position: sticky;
+  top: 20px;
+}
+
 .sidebar-link {
   display: block;
   color: #ceeaff;
